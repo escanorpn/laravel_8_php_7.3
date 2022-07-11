@@ -86,10 +86,10 @@ class ProductController extends Controller
 
     public function addProduct(Request $request)
         {
-        $this->validate($request, [
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:855',
-        ]);
+        // $this->validate($request, [
+        //     'name' => 'required|string|max:255',
+        //     'description' => 'required|string|max:855',
+        // ]);
         $product = new Product;
         $product->name = $request->name;
         $product->description = $request->description;
@@ -103,8 +103,8 @@ class ProductController extends Controller
         // }
         return response()->json([
             'message' => 'Product registered',
-            'user' => $product
+            'Product' => $product
         ], 201);
-        
+
     }
 }
