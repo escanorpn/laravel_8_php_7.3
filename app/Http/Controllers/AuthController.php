@@ -4,6 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
+use Illuminate\Support\Facades\Hash;
+use JWTAuth;
+
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
@@ -13,7 +17,7 @@ class AuthController extends Controller
      * @return void
      */
     public function __construct() {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        // $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -29,7 +33,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorizedz'], 401);
         }
         return $this->createNewToken($token);
     }
@@ -80,7 +84,35 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
+        //  if (! $token = auth()->attempt($validator->validated())) {
+        //     return response()->json(['error' => 'Unauthorizedz'], 401);
+        // }
         return response()->json(auth()->user());
+    }
+    
+    public function getAuthenticatedUser()
+    {
+            try {
+
+                    if (! $user = JWTAuth::parseToken()->authenticate()) {
+                            return response()->json(['user_not_found'], 404);
+                    }
+
+            } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+
+                    return response()->json(['token_expired'], $e->getStatusCode());
+
+            } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+
+                    return response()->json(['token_invalid'], $e->getStatusCode());
+
+            } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+
+                    return response()->json(['token_absent'], $e->getStatusCode());
+
+            }
+
+            return response()->json("haha");
     }
     /**
      * Get the token array structure.
