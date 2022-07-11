@@ -105,5 +105,6 @@ class ProductController extends Controller
             'message' => 'Product registered',
             'user' => $product
         ], 201);
+        
     }
 }
